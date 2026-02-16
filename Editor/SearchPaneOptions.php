@@ -356,7 +356,8 @@ class SearchPaneOptions extends Ext
 				->query('select')
 				->distinct(true)
 				->table($table)
-				->left_join($leftJoin);
+				->left_join($leftJoin)
+				->where($this->_where);
 
 			if ($field->apply('get') && $field->getValue() === null) {
 				$query->get($value . ' as value');
