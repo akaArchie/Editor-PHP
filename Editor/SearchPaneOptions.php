@@ -366,7 +366,11 @@ class SearchPaneOptions extends Ext
 				// We viewTotal is enabled, we need to do a count to get the number of records,
 				// If it isn't we still need to know it exists, but don't care about the cardinality
 				if ($viewCount) {
-					$query->get('COUNT(*) as count');
+					if (is_array($leftJoin) && count($leftJoin) > 0) {
+						$query->get('COUNT(DISTINCT ' . $leftJoin[0]['field2'] . ') as count');
+					} else {
+						$query->get('COUNT(*) as count');
+					}
 				} else {
 					$query->get('(1) as count');
 				}
