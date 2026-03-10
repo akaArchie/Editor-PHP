@@ -913,10 +913,20 @@ class Join extends Ext
 				$editorTable = $this->_aliasParentTable;
 			}
 
+			// Split the link into table and field name using the last dot as the separator
+			// Ensures that schema name is retained in the table name (e.g. public.table.field)
+			$splitLink = static function ($link) {
+				$pos = strrpos($link, '.');
+				if ($pos === false) {
+					return [$link, null];
+				}
+				return [substr($link, 0, $pos), substr($link, $pos + 1)];
+			};
+
 			if (count($links) === 2) {
 				// No link table
-				$f1 = explode('.', $links[0]);
-				$f2 = explode('.', $links[1]);
+				$f1 = $splitLink($links[0]);
+				$f2 = $splitLink($links[1]);
 
 				if ($f1[0] === $editorTable) {
 					$this->_join['parent'] = $f1[1];
@@ -927,10 +937,10 @@ class Join extends Ext
 				}
 			} else {
 				// Link table
-				$f1 = explode('.', $links[0]);
-				$f2 = explode('.', $links[1]);
-				$f3 = explode('.', $links[2]);
-				$f4 = explode('.', $links[3]);
+				$f1 = $splitLink($links[0]);
+				$f2 = $splitLink($links[1]);
+				$f3 = $splitLink($links[2]);
+				$f4 = $splitLink($links[3]);
 
 				// Discover the name of the link table
 				if ($f1[0] !== $editorTable && $f1[0] !== $joinTable) {
